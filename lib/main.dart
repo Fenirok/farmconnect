@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:farmconnect/providers/products_provider.dart';
-import 'services/supabase_service.dart';
 import 'providers/cart_provider.dart';
 import 'providers/negotiations_provider.dart';
 import 'providers/language_provider.dart';
@@ -27,17 +26,19 @@ import 'screens/farmer_login_screen.dart';
 import 'screens/farmer_registration_screen.dart';
 import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart';
+import 'consumer/screens/consumer_login_screen.dart';
+import 'consumer/screens/consumer_signup_screen.dart';
+import 'services/supabase_service.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Supabase
+
+  // Initialize Supabase for farmer OTP and data storage
   try {
     await SupabaseService().initialize();
   } catch (e) {
     debugPrint('Error initializing Supabase: $e');
-    // Continue with app launch even if Supabase fails
   }
 
   // Add error handling for Flutter framework errors
@@ -114,6 +115,9 @@ class MyApp extends StatelessWidget {
           home: const WelcomeScreen(),
           routes: {
             '/farmer-login': (ctx) => const FarmerLoginScreen(),
+            ConsumerLoginScreen.routeName: (ctx) => const ConsumerLoginScreen(),
+            ConsumerSignupScreen.routeName: (ctx) =>
+                const ConsumerSignupScreen(),
             FarmerRegistrationScreen.routeName: (ctx) =>
                 const FarmerRegistrationScreen(),
             ProductsOverviewScreen.routeName: (ctx) =>
@@ -181,7 +185,7 @@ class MyApp extends StatelessWidget {
                     ),
                   );
                 }
-                
+
               case ChatDetailScreen.routeName:
                 try {
                   final args = settings.arguments as Map<String, dynamic>?;

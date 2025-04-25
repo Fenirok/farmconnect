@@ -9,13 +9,14 @@ import '../../providers/wallet_provider.dart';
 import 'cart_screen.dart';
 import 'wallet_screen.dart';
 import '../../models/product.dart';
-import '../widgets/product_grid.dart';
-import '../widgets/category_filter.dart';
 import '../../l10n/app_localizations.dart';
 
 enum FilterOptions {
   all,
-  organic,
+  vegetables,
+  fruits,
+  crops,
+  poultry,
 }
 
 class ProductsOverviewScreen extends StatefulWidget {
@@ -28,20 +29,18 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  var _showOnlyOrganic = false;
   String? _selectedCategory;
-  late Future<void> _productsFuture;
+  bool _isInit = true;
 
   @override
-  void initState() {
-    super.initState();
-    // Load products from Supabase when the screen initializes
-    _productsFuture = _refreshProducts();
-  }
-
-  Future<void> _refreshProducts() async {
-    return Provider.of<ProductsProvider>(context, listen: false)
-        .fetchProductsFromSupabase();
+  void didChangeDependencies() {
+    if (_isInit) {
+      Future.microtask(() {
+        Provider.of<ProductsProvider>(context, listen: false).fetchProducts();
+      });
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   void _selectCategory(String? category) {
@@ -55,18 +54,40 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     final productsData = Provider.of<ProductsProvider>(context);
     final walletProvider = Provider.of<WalletProvider>(context, listen: false);
     final appLocalizations = AppLocalizations.of(context);
-    
-    // Filter products by category if a category is selected
-    List<Product> displayedProducts = _selectedCategory == null
-        ? productsData.items
-        : productsData.getProductsByCategory(_selectedCategory!);
 
     return WillPopScope(
-      onWillPop: () async => false, // Prevent back button
+      onWillPop: () async {
+        final shouldLogout = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Logout'),
+                content: const Text('Do you want to logout?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+            ) ??
+            false;
+
+        if (shouldLogout) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/',
+            (route) => false,
+          );
+        }
+        return false;
+      },
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false, // Remove back button
-          title: const Text('FarmConnect'),
+          automaticallyImplyLeading: false,
+          title: const Text('AgroKart'),
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Colors.white,
           actions: [
@@ -74,21 +95,45 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               icon: const Icon(Icons.filter_list),
               onSelected: (FilterOptions selectedValue) {
                 setState(() {
-                  if (selectedValue == FilterOptions.organic) {
-                    _showOnlyOrganic = true;
-                  } else {
-                    _showOnlyOrganic = false;
+                  switch (selectedValue) {
+                    case FilterOptions.all:
+                      _selectedCategory = null;
+                      break;
+                    case FilterOptions.vegetables:
+                      _selectedCategory = 'Vegetables';
+                      break;
+                    case FilterOptions.fruits:
+                      _selectedCategory = 'Fruits';
+                      break;
+                    case FilterOptions.crops:
+                      _selectedCategory = 'Crops';
+                      break;
+                    case FilterOptions.poultry:
+                      _selectedCategory = 'Poultry';
+                      break;
                   }
                 });
               },
               itemBuilder: (_) => [
                 const PopupMenuItem(
                   value: FilterOptions.all,
-                  child: Text('Show All'),
+                  child: Text('All Products'),
                 ),
                 const PopupMenuItem(
-                  value: FilterOptions.organic,
-                  child: Text('Only Organic'),
+                  value: FilterOptions.vegetables,
+                  child: Text('Vegetables'),
+                ),
+                const PopupMenuItem(
+                  value: FilterOptions.fruits,
+                  child: Text('Fruits'),
+                ),
+                const PopupMenuItem(
+                  value: FilterOptions.crops,
+                  child: Text('Crops'),
+                ),
+                const PopupMenuItem(
+                  value: FilterOptions.poultry,
+                  child: Text('Poultry'),
                 ),
               ],
             ),
@@ -177,7 +222,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _showOnlyOrganic ? 'Organic Products' : 'All Products',
+                    _selectedCategory == null
+                        ? 'All Products'
+                        : _selectedCategory!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   PopupMenuButton(
@@ -223,53 +270,83 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               ),
             ),
             Expanded(
-              child: FutureBuilder(
-                future: _productsFuture,
-                builder: (ctx, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  } else if (productsData.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (productsData.error != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Error: ${productsData.error}',
-                            style: const TextStyle(color: Colors.red),
+              child: productsData.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : productsData.error != null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                size: 60,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Error loading products',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                productsData.error!,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: Colors.red),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Provider.of<ProductsProvider>(context,
+                                          listen: false)
+                                      .fetchProducts();
+                                },
+                                child: const Text('Retry'),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _productsFuture = _refreshProducts();
-                              });
-                            },
-                            child: Text(appLocalizations.retry),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else if (displayedProducts.isEmpty) {
-                    return Center(
-                      child: Text(appLocalizations.noProductsFound),
-                    );
-                  } else {
-                    return RefreshIndicator(
-                      onRefresh: _refreshProducts,
-                      child: ProductGrid(products: displayedProducts),
-                    );
-                  }
-                },
-              ),
+                        )
+                      : productsData.items.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.shopping_basket_outlined,
+                                    size: 60,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No products available',
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Check back later for fresh products',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : RefreshIndicator(
+                              onRefresh: () async {
+                                await Provider.of<ProductsProvider>(context,
+                                        listen: false)
+                                    .fetchProducts();
+                              },
+                              child: ProductsGrid(
+                                selectedCategory: _selectedCategory,
+                              ),
+                            ),
             ),
           ],
         ),

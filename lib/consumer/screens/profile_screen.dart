@@ -2,16 +2,90 @@ import 'package:flutter/material.dart';
 import '../../screens/welcome_screen.dart';
 import 'orders_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
 
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  Map<String, dynamic>? _consumerData;
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchConsumerData();
+  }
+
+  Future<void> _fetchConsumerData() async {
+    try {
+      debugPrint('Starting to fetch consumer data...');
+
+      // Get the current user
+      final user = SupabaseService().currentUser;
+      debugPrint('Current user: ${user?.id}');
+
+      if (user == null) {
+        throw Exception('User not authenticated. Please login again.');
+      }
+
+      // Get the phone number from the user's metadata
+      final phone = user.userMetadata?['phone'] as String?;
+      debugPrint('Phone from metadata: $phone');
+
+      if (phone == null) {
+        throw Exception('Phone number not found in user metadata');
+      }
+
+      // Format phone number to match database format
+      String formattedPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+      if (formattedPhone.startsWith('91') && formattedPhone.length > 10) {
+        formattedPhone = formattedPhone.substring(2);
+      }
+      debugPrint('Formatted phone for query: $formattedPhone');
+
+      // Fetch consumer data using the phone number
+      final consumerData =
+          await SupabaseService().getConsumerByPhone(formattedPhone);
+      debugPrint('Fetched consumer data: $consumerData');
+
+      if (consumerData == null) {
+        throw Exception(
+            'Consumer profile not found. Please complete your profile setup.');
+      }
+
+      setState(() {
+        _consumerData = consumerData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching consumer data: $e');
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '';
+    final parts = name.split(' ');
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.myProfile),
@@ -19,43 +93,52 @@ class ProfileScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              // Navigate to edit profile
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(appLocalizations.editProfile),
-                ),
-              );
-            },
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchConsumerData,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildProfileHeader(context),
-            const Divider(),
-            _buildMenuSection(context),
-          ],
-        ),
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(_errorMessage!),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _fetchConsumerData,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildProfileHeader(context),
+                      const Divider(),
+                      _buildMenuSection(context),
+                    ],
+                  ),
+                ),
     );
   }
 
   Widget _buildProfileHeader(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 50,
             backgroundColor: Colors.green,
             child: Text(
-              'RS',
-              style: TextStyle(
+              _getInitials(_consumerData?['name'] ?? ''),
+              style: const TextStyle(
                 fontSize: 32,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -63,16 +146,16 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Rahul Sharma',
-            style: TextStyle(
+          Text(
+            _consumerData?['name'] ?? '',
+            style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'rahul.sharma@example.com',
+            _consumerData?['address'] ?? '',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -80,7 +163,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '+91 98765 43210',
+            '+91 ${_consumerData?['phone'] ?? ''}',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -93,7 +176,7 @@ class ProfileScreen extends StatelessWidget {
               Column(
                 children: [
                   const Text(
-                    '12',
+                    '0', // TODO: Fetch actual order count
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -118,7 +201,7 @@ class ProfileScreen extends StatelessWidget {
               Column(
                 children: [
                   const Text(
-                    '3',
+                    '0', // TODO: Fetch actual negotiations count
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -143,7 +226,7 @@ class ProfileScreen extends StatelessWidget {
               Column(
                 children: [
                   const Text(
-                    '5',
+                    '0', // TODO: Fetch actual favorites count
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -166,7 +249,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildMenuSection(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -184,7 +267,6 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.location_on_outlined,
             title: appLocalizations.myAddresses,
             onTap: () {
-              // Navigate to addresses
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(appLocalizations.addressesFeature),
@@ -197,7 +279,6 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.favorite_border,
             title: appLocalizations.myFavorites,
             onTap: () {
-              // Navigate to favorites
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(appLocalizations.favoritesFeature),
@@ -210,7 +291,6 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.payment_outlined,
             title: appLocalizations.paymentMethods,
             onTap: () {
-              // Navigate to payment methods
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(appLocalizations.paymentMethodsFeature),
@@ -224,7 +304,6 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.help_outline,
             title: appLocalizations.helpAndSupport,
             onTap: () {
-              // Navigate to help
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(appLocalizations.helpFeature),
@@ -237,7 +316,6 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.settings_outlined,
             title: appLocalizations.settings,
             onTap: () {
-              // Navigate to settings
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(appLocalizations.settingsFeature),
@@ -251,7 +329,6 @@ class ProfileScreen extends StatelessWidget {
             title: appLocalizations.logout,
             textColor: Colors.red,
             onTap: () {
-              // Show confirmation dialog
               showDialog(
                 context: context,
                 builder: (ctx) => AlertDialog(
@@ -260,20 +337,33 @@ class ProfileScreen extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(ctx).pop(); // Close dialog
+                        Navigator.of(ctx).pop();
                       },
                       child: Text(appLocalizations.cancel),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop(); // Close dialog
-                        // Navigate to welcome screen and clear all routes
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const WelcomeScreen(),
-                          ),
-                          (route) => false, // Remove all routes
-                        );
+                      onPressed: () async {
+                        Navigator.of(ctx).pop();
+                        try {
+                          await SupabaseService().signOut();
+                          if (mounted) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => const WelcomeScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Error signing out: ${e.toString()}'),
+                              ),
+                            );
+                          }
+                        }
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.red,

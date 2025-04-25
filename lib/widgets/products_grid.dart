@@ -1,41 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/products_provider.dart';
-import 'product_item.dart';
+import './product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
-  final bool showOnlyOrganic;
+  final String? selectedCategory;
 
   const ProductsGrid({
     Key? key,
-    this.showOnlyOrganic = false,
+    this.selectedCategory,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<ProductsProvider>(context);
-    final products =
-        showOnlyOrganic ? productsData.organicProducts : productsData.items;
+    final products = selectedCategory == null
+        ? productsData.items
+        : productsData.getProductsByCategory(selectedCategory!);
 
-    return products.isEmpty
-        ? Center(
-            child: Text(
-              'No products found!',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          )
-        : GridView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: products.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemBuilder: (ctx, i) => ProductItem(
-              product: products[i],
-            ),
-          );
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: products.length,
+      itemBuilder: (ctx, i) => ProductItem(
+        product: products[i],
+      ),
+    );
   }
 }

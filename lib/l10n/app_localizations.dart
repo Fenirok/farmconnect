@@ -85,7 +85,10 @@ class AppLocalizations {
       'enterValidAddress': 'Enter your address',
       'enterKisanId': 'Enter your Kisan ID',
       'enterPhoneNumber': 'Please enter your phone number',
-      
+      'resendOTP': 'Resend OTP',
+      'enterAadharId': 'Enter your Aadhaar ID',
+      'enterValidAadharId': 'Please enter a valid 12-digit Aadhaar ID',
+
       // Dashboard Screen
       'dashboard': 'Dashboard',
       'welcomeFarmer': 'Welcome, Farmer!',
@@ -93,7 +96,7 @@ class AppLocalizations {
       'activeOrders': 'Active Orders',
       'monthlySales': 'Monthly Sales',
       'salesGrowth': 'Sales Growth',
-      
+
       // Products Screen
       'products': 'Products',
       'addProduct': 'Add Product',
@@ -118,7 +121,7 @@ class AppLocalizations {
       'deleteProduct': 'Delete Product',
       'deleteConfirmation': 'Are you sure you want to delete',
       'cancel': 'Cancel',
-      
+
       // Product Names
       'organicTomatoes': 'Organic Tomatoes',
       'freshCarrots': 'Fresh Carrots',
@@ -126,7 +129,7 @@ class AppLocalizations {
       'vegetable': 'Vegetable',
       'organic': 'Organic',
       'fresh': 'Fresh',
-      
+
       // Orders Screen
       'myOrders': 'My Orders',
       'searchOrders': 'Search orders...',
@@ -145,7 +148,7 @@ class AppLocalizations {
       'deliveryAddress': 'Delivery Address',
       'orderItems': 'Order Items',
       'contactSupport': 'Contact Support',
-      
+
       // Profile Screen
       'myProfile': 'My Profile',
       'editProfile': 'Edit profile feature coming soon!',
@@ -164,7 +167,7 @@ class AppLocalizations {
       'settingsFeature': 'Settings feature coming soon!',
       'logout': 'Logout',
       'logoutConfirmation': 'Are you sure you want to logout?',
-      
+
       // Product Overview Screen
       'sortBy': 'Sort by',
       'nameAZ': 'Name (A-Z)',
@@ -174,6 +177,37 @@ class AppLocalizations {
       'newest': 'Newest',
       'noProductsFound': 'No products found!',
       'retry': 'Retry',
+
+      // Negotiation strings
+      'originalPrice': 'Original Price',
+      'offeredPrice': 'Offered Price',
+      'counterOffer': 'Counter Offer',
+      'accept': 'Accept',
+      'reject': 'Reject',
+      'accepted': 'Accepted',
+      'rejected': 'Rejected',
+      'submit': 'Submit',
+
+      // Consumer specific messages
+      'noConsumerProfileFound':
+          'No consumer profile found with this phone number. Please sign up first.',
+      'consumerProfileNotFound':
+          'Consumer profile not found. Please sign up first.',
+      'otpVerifiedSuccess': 'OTP verified successfully',
+
+      // Error Messages
+      'networkError':
+          'Network error. Please check your internet connection and try again.',
+      'connectionTimeout':
+          'Connection timeout. Please check your internet connection and try again.',
+      'anErrorOccurred': 'An error occurred. Please try again.',
+      'profileNotFound': 'Profile Not Found',
+      'noFarmerProfileFound':
+          'No farmer profile found with this phone number. Please register first.',
+      'farmerProfileNotFound':
+          'Farmer profile not found. Please register first.',
+      'otpSentSuccess': 'OTP sent successfully',
+      'register': 'Register',
     },
     'hi': {
       'welcome': 'फार्मकनेक्ट में आपका स्वागत है',
@@ -215,7 +249,10 @@ class AppLocalizations {
       'enterValidAddress': 'अपना पता दर्ज करें',
       'enterKisanId': 'अपना किसान आईडी दर्ज करें',
       'enterPhoneNumber': 'कृपया अपना फोन नंबर दर्ज करें',
-      
+      'resendOTP': 'ओटीपी पुनः भेजें',
+      'enterAadharId': 'आधार आईडी दर्ज करें',
+      'enterValidAadharId': 'कृपया 12 अंकों का वैध आधार आईडी दर्ज करें',
+
       // Dashboard Screen
       'dashboard': 'डैशबोर्ड',
       'welcomeFarmer': 'स्वागत है, किसान!',
@@ -223,7 +260,7 @@ class AppLocalizations {
       'activeOrders': 'सक्रिय ऑर्डर',
       'monthlySales': 'मासिक बिक्री',
       'salesGrowth': 'बिक्री वृद्धि',
-      
+
       // Products Screen
       'products': 'उत्पाद',
       'addProduct': 'उत्पाद जोड़ें',
@@ -248,7 +285,7 @@ class AppLocalizations {
       'deleteProduct': 'उत्पाद हटाएं',
       'deleteConfirmation': 'क्या आप निश्चित हैं कि आप हटाना चाहते हैं',
       'cancel': 'रद्द करें',
-      
+
       // Product Names
       'organicTomatoes': 'जैविक टमाटर',
       'freshCarrots': 'ताजा गाजर',
@@ -256,7 +293,7 @@ class AppLocalizations {
       'vegetable': 'सब्जी',
       'organic': 'जैविक',
       'fresh': 'ताजा',
-      
+
       // Orders Screen
       'myOrders': 'मेरे ऑर्डर',
       'searchOrders': 'ऑर्डर खोजें...',
@@ -275,7 +312,7 @@ class AppLocalizations {
       'deliveryAddress': 'डिलीवरी पता',
       'orderItems': 'ऑर्डर आइटम',
       'contactSupport': 'सहायता से संपर्क करें',
-      
+
       // Profile Screen
       'myProfile': 'मेरी प्रोफाइल',
       'editProfile': 'प्रोफाइल संपादित करने की सुविधा जल्द ही आ रही है!',
@@ -294,7 +331,7 @@ class AppLocalizations {
       'settingsFeature': 'सेटिंग्स सुविधा जल्द ही आ रही है!',
       'logout': 'लॉगआउट',
       'logoutConfirmation': 'क्या आप लॉगआउट करना चाहते हैं?',
-      
+
       // Product Overview Screen
       'sortBy': 'इसके अनुसार क्रमबद्ध करें',
       'nameAZ': 'नाम (A-Z)',
@@ -304,6 +341,37 @@ class AppLocalizations {
       'newest': 'नवीनतम',
       'noProductsFound': 'कोई प्रोडक्ट नहीं मिला!',
       'retry': 'पुनः प्रयास करें',
+
+      // Negotiation strings
+      'originalPrice': 'मूल कीमत',
+      'offeredPrice': 'प्रस्तावित कीमत',
+      'counterOffer': 'काउंटर ऑफर',
+      'accept': 'स्वीकार करें',
+      'reject': 'अस्वीकार करें',
+      'accepted': 'स्वीकृत',
+      'rejected': 'अस्वीकृत',
+      'submit': 'जमा करें',
+
+      // Consumer specific messages
+      'noConsumerProfileFound':
+          'इस फोन नंबर से कोई उपभोक्ता प्रोफ़ाइल नहीं मिली। कृपया पहले साइन अप करें।',
+      'consumerProfileNotFound':
+          'उपभोक्ता प्रोफ़ाइल नहीं मिली। कृपया पहले साइन अप करें।',
+      'otpVerifiedSuccess': 'ओटीपी सफलतापूर्वक सत्यापित किया गया',
+
+      // Error Messages
+      'networkError':
+          'नेटवर्क त्रुटि। कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।',
+      'connectionTimeout':
+          'कनेक्शन टाइमआउट। कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।',
+      'anErrorOccurred': 'एक त्रुटि हुई। कृपया पुनः प्रयास करें।',
+      'profileNotFound': 'प्रोफ़ाइल नहीं मिली',
+      'noFarmerProfileFound':
+          'इस फोन नंबर से कोई किसान प्रोफ़ाइल नहीं मिली। कृपया पहले पंजीकरण करें।',
+      'farmerProfileNotFound':
+          'किसान प्रोफ़ाइल नहीं मिली। कृपया पहले पंजीकरण करें।',
+      'otpSentSuccess': 'ओटीपी सफलतापूर्वक भेजा गया',
+      'register': 'पंजीकरण करें',
     },
     'bn': {
       'welcome': 'ফার্মকানেক্টে আপনাকে স্বাগতম',
@@ -345,7 +413,10 @@ class AppLocalizations {
       'enterValidAddress': 'আপনার ঠিকানা লিখুন',
       'enterKisanId': 'আপনার কিসান আইডি লিখুন',
       'enterPhoneNumber': 'দয়া করে আপনার ফোন নম্বর লিখুন',
-      
+      'resendOTP': 'ওটিপি পুনঃ ভেজান',
+      'enterAadharId': 'আধার আইডি দিন',
+      'enterValidAadharId': 'দয়া করে 12 ডিজিটের একটি বৈধ আধার আইডি লিখুন',
+
       // Dashboard Screen
       'dashboard': 'ড্যাশবোর্ড',
       'welcomeFarmer': 'স্বাগতম, কৃষক!',
@@ -353,7 +424,7 @@ class AppLocalizations {
       'activeOrders': 'সক্রিয় অর্ডার',
       'monthlySales': 'মাসিক বিক্রয়',
       'salesGrowth': 'বিক্রয় বৃদ্ধি',
-      
+
       // Products Screen
       'products': 'পণ্য',
       'addProduct': 'পণ্য যোগ করুন',
@@ -378,7 +449,7 @@ class AppLocalizations {
       'deleteProduct': 'পণ্য মুছুন',
       'deleteConfirmation': 'আপনি কি নিশ্চিত যে আপনি মুছতে চান',
       'cancel': 'বাতিল করুন',
-      
+
       // Product Names
       'organicTomatoes': 'জৈব টমেটো',
       'freshCarrots': 'তাজা গাজর',
@@ -386,7 +457,7 @@ class AppLocalizations {
       'vegetable': 'শাকসবজি',
       'organic': 'জৈব',
       'fresh': 'তাজা',
-      
+
       // Orders Screen
       'myOrders': 'আমার অর্ডার',
       'searchOrders': 'অর্ডার খুঁজুন...',
@@ -405,7 +476,7 @@ class AppLocalizations {
       'deliveryAddress': 'ডেলিভারি ঠিকানা',
       'orderItems': 'অর্ডার আইটেম',
       'contactSupport': 'সাপোর্টের সাথে যোগাযোগ করুন',
-      
+
       // Profile Screen
       'myProfile': 'আমার প্রোফাইল',
       'editProfile': 'প্রোফাইল সম্পাদনার ফিচার শীঘ্রই আসছে!',
@@ -424,7 +495,7 @@ class AppLocalizations {
       'settingsFeature': 'সেটিংস ফিচার শীঘ্রই আসছে!',
       'logout': 'লগআউট',
       'logoutConfirmation': 'আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?',
-      
+
       // Product Overview Screen
       'sortBy': 'সাজানোর ধরন',
       'nameAZ': 'নাম (A-Z)',
@@ -434,6 +505,37 @@ class AppLocalizations {
       'newest': 'সবচেয়ে নতুন',
       'noProductsFound': 'কোন পণ্য পাওয়া যায়নি!',
       'retry': 'আবার চেষ্টা করুন',
+
+      // Negotiation strings
+      'originalPrice': 'মূল মূল্য',
+      'offeredPrice': 'প্রস্তাবিত মূল্য',
+      'counterOffer': 'কাউন্টার অফার',
+      'accept': 'গ্রহণ করুন',
+      'reject': 'অগ্রাধিকার করুন',
+      'accepted': 'গ্রহণযোগ্য',
+      'rejected': 'অগ্রাধিকার',
+      'submit': 'জমা দিন',
+
+      // Consumer specific messages
+      'noConsumerProfileFound':
+          'এই ফোন নম্বরে কোনো ভোক্তা প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে প্রথমে সাইন আপ করুন।',
+      'consumerProfileNotFound':
+          'ভোক্তা প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে প্রথমে সাইন আপ করুন।',
+      'otpVerifiedSuccess': 'ওটিপি সফলভাবে যাচাই করা হয়েছে',
+
+      // Error Messages
+      'networkError':
+          'নেটওয়ার্ক ত্রুটি। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।',
+      'connectionTimeout':
+          'সংযোগ সময়সীমা শেষ। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।',
+      'anErrorOccurred': 'একটি ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+      'profileNotFound': 'প্রোফাইল পাওয়া যায়নি',
+      'noFarmerProfileFound':
+          'এই ফোন নম্বরে কোনো কৃষক প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে প্রথমে নিবন্ধন করুন।',
+      'farmerProfileNotFound':
+          'কৃষক প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে প্রথমে নিবন্ধন করুন।',
+      'otpSentSuccess': 'ওটিপি সফলভাবে পাঠানো হয়েছে',
+      'register': 'নিবন্ধন করুন',
     },
   };
 
@@ -460,7 +562,7 @@ class AppLocalizations {
   String get verify => _getLocalizedValue('verify');
   String get login => _getLocalizedValue('login');
   String get signup => _getLocalizedValue('signup');
-  
+
   // Dashboard Screen
   String get dashboard => _getLocalizedValue('dashboard');
   String get welcomeFarmer => _getLocalizedValue('welcomeFarmer');
@@ -468,7 +570,7 @@ class AppLocalizations {
   String get activeOrders => _getLocalizedValue('activeOrders');
   String get monthlySales => _getLocalizedValue('monthlySales');
   String get salesGrowth => _getLocalizedValue('salesGrowth');
-  
+
   // Products Screen
   String get products => _getLocalizedValue('products');
   String get addProduct => _getLocalizedValue('addProduct');
@@ -493,7 +595,7 @@ class AppLocalizations {
   String get deleteProduct => _getLocalizedValue('deleteProduct');
   String get deleteConfirmation => _getLocalizedValue('deleteConfirmation');
   String get cancel => _getLocalizedValue('cancel');
-  
+
   // Product Names
   String get organicTomatoes => _getLocalizedValue('organicTomatoes');
   String get freshCarrots => _getLocalizedValue('freshCarrots');
@@ -501,7 +603,7 @@ class AppLocalizations {
   String get vegetable => _getLocalizedValue('vegetable');
   String get organic => _getLocalizedValue('organic');
   String get fresh => _getLocalizedValue('fresh');
-  
+
   // Orders Screen
   String get myOrders => _getLocalizedValue('myOrders');
   String get searchOrders => _getLocalizedValue('searchOrders');
@@ -520,7 +622,7 @@ class AppLocalizations {
   String get deliveryAddress => _getLocalizedValue('deliveryAddress');
   String get orderItems => _getLocalizedValue('orderItems');
   String get contactSupport => _getLocalizedValue('contactSupport');
-  
+
   // Profile Screen
   String get myProfile => _getLocalizedValue('myProfile');
   String get editProfile => _getLocalizedValue('editProfile');
@@ -532,7 +634,8 @@ class AppLocalizations {
   String get myFavorites => _getLocalizedValue('myFavorites');
   String get favoritesFeature => _getLocalizedValue('favoritesFeature');
   String get paymentMethods => _getLocalizedValue('paymentMethods');
-  String get paymentMethodsFeature => _getLocalizedValue('paymentMethodsFeature');
+  String get paymentMethodsFeature =>
+      _getLocalizedValue('paymentMethodsFeature');
   String get helpAndSupport => _getLocalizedValue('helpAndSupport');
   String get helpFeature => _getLocalizedValue('helpFeature');
   String get settings => _getLocalizedValue('settings');
@@ -540,12 +643,15 @@ class AppLocalizations {
   String get logout => _getLocalizedValue('logout');
   String get logoutConfirmation => _getLocalizedValue('logoutConfirmation');
 
-  String get enterValidPhoneNumber => _getLocalizedValue('enterValidPhoneNumber');
+  String get enterValidPhoneNumber =>
+      _getLocalizedValue('enterValidPhoneNumber');
   String get enterValidOTP => _getLocalizedValue('enterValidOTP');
   String get enterName => _getLocalizedValue('enterName');
   String get enterValidAddress => _getLocalizedValue('enterValidAddress');
   String get enterKisanId => _getLocalizedValue('enterKisanId');
   String get enterPhoneNumber => _getLocalizedValue('enterPhoneNumber');
+  String get enterAadharId => _getLocalizedValue('enterAadharId');
+  String get enterValidAadharId => _getLocalizedValue('enterValidAadharId');
 
   String get sortBy => _getLocalizedValue('sortBy');
   String get nameAZ => _getLocalizedValue('nameAZ');
@@ -555,6 +661,35 @@ class AppLocalizations {
   String get newest => _getLocalizedValue('newest');
   String get noProductsFound => _getLocalizedValue('noProductsFound');
   String get retry => _getLocalizedValue('retry');
+
+  String get resendOTP => _getLocalizedValue('resendOTP');
+
+  // Negotiation getters
+  String get originalPrice => _getLocalizedValue('originalPrice');
+  String get offeredPrice => _getLocalizedValue('offeredPrice');
+  String get counterOffer => _getLocalizedValue('counterOffer');
+  String get accept => _getLocalizedValue('accept');
+  String get reject => _getLocalizedValue('reject');
+  String get accepted => _getLocalizedValue('accepted');
+  String get rejected => _getLocalizedValue('rejected');
+  String get submit => _getLocalizedValue('submit');
+
+  String get noConsumerProfileFound =>
+      _getLocalizedValue('noConsumerProfileFound');
+  String get consumerProfileNotFound =>
+      _getLocalizedValue('consumerProfileNotFound');
+  String get otpVerifiedSuccess => _getLocalizedValue('otpVerifiedSuccess');
+
+  // Error Messages
+  String get networkError => _getLocalizedValue('networkError');
+  String get connectionTimeout => _getLocalizedValue('connectionTimeout');
+  String get anErrorOccurred => _getLocalizedValue('anErrorOccurred');
+  String get profileNotFound => _getLocalizedValue('profileNotFound');
+  String get noFarmerProfileFound => _getLocalizedValue('noFarmerProfileFound');
+  String get farmerProfileNotFound =>
+      _getLocalizedValue('farmerProfileNotFound');
+  String get otpSentSuccess => _getLocalizedValue('otpSentSuccess');
+  String get register => _getLocalizedValue('register');
 }
 
 class _AppLocalizationsDelegate
@@ -563,9 +698,26 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) {
-    return ['en', 'hi', 'bn', 'ta', 'te', 'mr', 'gu', 'kn', 'ml', 'pa', 'or', 
-            'as', 'ne', 'mai', 'sa', 'kok', 'doi', 'bho']
-        .contains(locale.languageCode);
+    return [
+      'en',
+      'hi',
+      'bn',
+      'ta',
+      'te',
+      'mr',
+      'gu',
+      'kn',
+      'ml',
+      'pa',
+      'or',
+      'as',
+      'ne',
+      'mai',
+      'sa',
+      'kok',
+      'doi',
+      'bho'
+    ].contains(locale.languageCode);
   }
 
   @override
@@ -575,4 +727,4 @@ class _AppLocalizationsDelegate
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
-} 
+}

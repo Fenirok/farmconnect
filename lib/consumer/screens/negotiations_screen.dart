@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/negotiations_provider.dart';
+import '../../models/negotiation.dart';
 
 class NegotiationsScreen extends StatelessWidget {
   static const routeName = '/negotiations';
@@ -181,7 +182,7 @@ class NegotiationItem extends StatelessWidget {
                   negotiation.status == 'pending'
                       ? 'Response by: ${_formatDeadline(negotiation.responseDeadline)}'
                       : negotiation.status == 'accepted'
-                          ? 'Final price: Rs. ${negotiation.finalPrice?.toStringAsFixed(2) ?? '-'}'
+                          ? 'Final price: Rs. ${negotiation.finalPrice.toStringAsFixed(2)}'
                           : 'Rejected on: ${_formatDate(negotiation.createdAt.add(Duration(days: 1)))}',
                   style: TextStyle(
                     fontSize: 12,

@@ -20,7 +20,7 @@ class _FarmerLayoutState extends State<FarmerLayout> {
     const DashboardScreen(),
     const ProductsScreen(),
     const OrdersScreen(),
-    ProfileScreen(), // Profile Screen
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,30 +33,84 @@ class _FarmerLayoutState extends State<FarmerLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color(0xFF2E603A),
+            unselectedItemColor: Colors.grey,
+            backgroundColor: const Color(0xFFE8F5E9),
+            elevation: 20,
+            selectedFontSize: 14,
+            unselectedFontSize: 12,
+            onTap: _onItemTapped,
+            items: [
+              BottomNavigationBarItem(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _selectedIndex == 0
+                        ? const Color(0xFF2E603A).withOpacity(0.2)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.dashboard),
+                ),
+                label: 'Dashboard',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _selectedIndex == 1
+                        ? const Color(0xFF2E603A).withOpacity(0.2)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.inventory),
+                ),
+                label: 'Products',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _selectedIndex == 2
+                        ? const Color(0xFF2E603A).withOpacity(0.2)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.shopping_bag),
+                ),
+                label: 'Orders',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _selectedIndex == 3
+                        ? const Color(0xFF2E603A).withOpacity(0.2)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.person),
+                ),
+                label: 'Profile',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: 'Products',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Orders',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }
