@@ -7,6 +7,8 @@ import '../widgets/main_layout.dart';
 import '../farmer/widgets/farmer_layout.dart';
 import '../l10n/app_localizations.dart';
 import '../screens/farmer_registration_screen.dart';
+import '../consumer/screens/consumer_login_screen.dart';
+import '../consumer/screens/consumer_signup_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -22,17 +24,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   final _aadharIdController = TextEditingController();
   final _phoneController = TextEditingController();
   final _consumerPhoneController = TextEditingController();
-  final List<TextEditingController> _farmerOtpControllers = List.generate(
+  final _consumerOtpControllers = List.generate(
     5,
     (index) => TextEditingController(),
-  );
-  final List<TextEditingController> _consumerOtpControllers = List.generate(
-    5,
-    (index) => TextEditingController(),
-  );
-  final List<FocusNode> _farmerOtpFocusNodes = List.generate(
-    5,
-    (index) => FocusNode(),
   );
   final List<FocusNode> _consumerOtpFocusNodes = List.generate(
     5,
@@ -80,14 +74,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     _aadharIdController.dispose();
     _phoneController.dispose();
     _consumerPhoneController.dispose();
-    for (var controller in _farmerOtpControllers) {
-      controller.dispose();
-    }
     for (var controller in _consumerOtpControllers) {
       controller.dispose();
-    }
-    for (var node in _farmerOtpFocusNodes) {
-      node.dispose();
     }
     for (var node in _consumerOtpFocusNodes) {
       node.dispose();
@@ -98,7 +86,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: CustomAppBar(
         title: appLocalizations.selectRole,
@@ -203,7 +191,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, FarmerRegistrationScreen.routeName);
+                          Navigator.pushNamed(
+                              context, FarmerRegistrationScreen.routeName);
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -221,24 +210,50 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   ],
                 ),
               ] else ...[
-                _buildAuthenticationFlow(
-                  role: role,
-                  idType: appLocalizations.aadharId,
-                  idController: _consumerPhoneController,
-                  otpControllers: _consumerOtpControllers,
-                  otpFocusNodes: _consumerOtpFocusNodes,
-                  showOtpField: _showConsumerOtpField,
-                  showVerifyButton: _showConsumerVerifyButton,
-                  onGenerateOtp: () {
-                    setState(() {
-                      _showConsumerOtpField = true;
-                    });
-                  },
-                  onVerifyOtp: () {
-                    setState(() {
-                      _showConsumerVerifyButton = true;
-                    });
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, ConsumerLoginScreen.routeName);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          appLocalizations.login,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, ConsumerSignupScreen.routeName);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: const BorderSide(color: Colors.green),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          appLocalizations.signup,
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.green),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ],
@@ -292,7 +307,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     required VoidCallback onVerifyOtp,
   }) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

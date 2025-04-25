@@ -1,43 +1,73 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math';
-
-class Negotiation {
-  final String id;
-  final String productId;
-  final String productName;
-  final String imageUrl;
-  final String farmerName;
-  final double originalPrice;
-  final double offeredPrice;
-  final double? finalPrice;
-  final String status; // 'pending', 'accepted', 'rejected'
-  final DateTime createdAt;
-  final DateTime responseDeadline;
-
-  Negotiation({
-    required this.id,
-    required this.productId,
-    required this.productName,
-    required this.imageUrl,
-    required this.farmerName,
-    required this.originalPrice,
-    required this.offeredPrice,
-    this.finalPrice,
-    required this.status,
-    required this.createdAt,
-    required this.responseDeadline,
-  });
-}
+import 'package:flutter/material.dart';
+import '../services/supabase_service.dart';
+import '../models/negotiation.dart';
 
 class NegotiationsProvider with ChangeNotifier {
-  final List<Negotiation> _negotiations = [];
+  final _supabaseService = SupabaseService();
+  bool _isLoading = false;
+  String? _error;
+  List<Negotiation> _negotiations = [];
 
-  List<Negotiation> get negotiations {
-    return [..._negotiations];
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  List<Negotiation> get negotiations => [..._negotiations];
+
+  Future<void> fetchNegotiations() async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      final negotiationsData =
+          await _supabaseService.getNegotiationsWithDetails();
+      _negotiations =
+          negotiationsData.map((data) => Negotiation.fromMap(data)).toList();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> submitNegotiation({
+    required String productName,
+    required String farmName,
+    required double listedPrice,
+    required double offerByConsumer,
+  }) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.submitNegotiation(
+        productName: productName,
+        farmName: farmName,
+        listedPrice: listedPrice,
+        offerByConsumer: offerByConsumer,
+      );
+
+      await fetchNegotiations(); // Refresh the negotiations list
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
   }
 
   List<Negotiation> getNegotiationsByStatus(String status) {
-    return _negotiations.where((negotiation) => negotiation.status == status).toList();
+    return _negotiations
+        .where((negotiation) => negotiation.status == status)
+        .toList();
   }
 
   void addNegotiation({
@@ -51,40 +81,38 @@ class NegotiationsProvider with ChangeNotifier {
   }) {
     final now = DateTime.now();
     final responseDeadline = now.add(responseTime);
-    
+
     final negotiation = Negotiation(
       id: 'neg_${DateTime.now().millisecondsSinceEpoch}_$productId',
-      productId: productId,
       productName: productName,
       imageUrl: imageUrl,
       farmerName: farmerName,
-      originalPrice: originalPrice,
-      offeredPrice: offeredPrice,
+      listedPrice: originalPrice,
+      offerByConsumer: offeredPrice,
       status: 'pending',
       createdAt: now,
-      responseDeadline: responseDeadline,
     );
-    
+
     _negotiations.add(negotiation);
     notifyListeners();
   }
 
-  void updateNegotiationStatus(String negotiationId, String status, {double? finalPrice}) {
-    final index = _negotiations.indexWhere((negotiation) => negotiation.id == negotiationId);
+  void updateNegotiationStatus(String negotiationId, String status,
+      {double? finalPrice}) {
+    final index = _negotiations
+        .indexWhere((negotiation) => negotiation.id == negotiationId);
     if (index >= 0) {
-      final negotiation = _negotiations[index];
+      final oldNegotiation = _negotiations[index];
       _negotiations[index] = Negotiation(
-        id: negotiation.id,
-        productId: negotiation.productId,
-        productName: negotiation.productName,
-        imageUrl: negotiation.imageUrl,
-        farmerName: negotiation.farmerName,
-        originalPrice: negotiation.originalPrice,
-        offeredPrice: negotiation.offeredPrice,
-        finalPrice: finalPrice ?? negotiation.finalPrice,
+        id: oldNegotiation.id,
+        productName: oldNegotiation.productName,
+        imageUrl: oldNegotiation.imageUrl,
+        farmerName: oldNegotiation.farmerName,
+        listedPrice: oldNegotiation.listedPrice,
+        offerByConsumer: oldNegotiation.offerByConsumer,
+        offerByFarmer: oldNegotiation.offerByFarmer,
         status: status,
-        createdAt: negotiation.createdAt,
-        responseDeadline: negotiation.responseDeadline,
+        createdAt: oldNegotiation.createdAt,
       );
       notifyListeners();
     }
@@ -99,22 +127,26 @@ class NegotiationsProvider with ChangeNotifier {
   void simulateFarmerResponse(String negotiationId) async {
     final random = Random();
     await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-    
-    final index = _negotiations.indexWhere((negotiation) => negotiation.id == negotiationId);
+
+    final index = _negotiations
+        .indexWhere((negotiation) => negotiation.id == negotiationId);
     if (index >= 0) {
       final negotiation = _negotiations[index];
-      
+
       // 60% chance of acceptance, 40% chance of rejection
       final isAccepted = random.nextDouble() > 0.4;
-      
+
       if (isAccepted) {
         // Calculate a final price between the original and offered price
-        final priceDifference = negotiation.originalPrice - negotiation.offeredPrice;
-        final randomFactor = random.nextDouble() * 0.7; // Random factor between 0 and 0.7
-        final finalPrice = negotiation.originalPrice - (priceDifference * randomFactor);
-        
+        final priceDifference =
+            negotiation.listedPrice - negotiation.offerByConsumer;
+        final randomFactor =
+            random.nextDouble() * 0.7; // Random factor between 0 and 0.7
+        final finalPrice =
+            negotiation.listedPrice - (priceDifference * randomFactor);
+
         updateNegotiationStatus(
-          negotiationId, 
+          negotiationId,
           'accepted',
           finalPrice: double.parse(finalPrice.toStringAsFixed(2)),
         );
@@ -123,4 +155,73 @@ class NegotiationsProvider with ChangeNotifier {
       }
     }
   }
-} 
+
+  Future<void> acceptNegotiation(String negotiationId) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.updateNegotiationStatus(negotiationId, 'accepted');
+      await fetchNegotiations();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> rejectNegotiation(String negotiationId) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.updateNegotiationStatus(negotiationId, 'rejected');
+      await fetchNegotiations();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> makeCounterOffer(
+      String negotiationId, double counterOfferPrice) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.submitCounterOffer(
+          negotiationId, counterOfferPrice);
+      await fetchNegotiations();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  // Get all pending negotiations
+  List<Negotiation> getPendingNegotiations() {
+    return _negotiations.where((neg) => neg.status == 'pending').toList();
+  }
+
+  // Get count of pending negotiations
+  int getPendingNegotiationsCount() {
+    return getPendingNegotiations().length;
+  }
+}

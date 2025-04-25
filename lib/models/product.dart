@@ -60,4 +60,4 @@ class Product {
       'location': location,
     };
   }
-} 
+}

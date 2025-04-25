@@ -12,102 +12,11 @@ enum SortOption {
 }
 
 class ProductsProvider with ChangeNotifier {
-  final SupabaseService _supabaseService = SupabaseService();
+  final _supabaseService = SupabaseService();
   bool _isLoading = false;
   String? _error;
 
-  List<Product> _items = [
-    Product(
-      id: 'p1',
-      name: 'Fresh Tomatoes',
-      description: 'Organic, locally grown tomatoes from Green Valley Farm.',
-      price: 30,
-      imageUrl:
-          'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Vegetables',
-      farmerId: 'f1',
-      farmerName: 'Green Valley Farm',
-      weight: 1.0,
-      unit: 'kg',
-      isOrganic: true,
-      location: 'Pune, Maharashtra',
-    ),
-    Product(
-      id: 'p2',
-      name: 'Fresh Potatoes',
-      description: 'Farm-fresh potatoes, perfect for roasting or mashing.',
-      price: 12,
-      imageUrl:
-          'https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Vegetables',
-      farmerId: 'f2',
-      farmerName: 'Sunrise Farms',
-      weight: 1.0,
-      unit: 'kg',
-      isOrganic: false,
-      location: 'Shimla, Himachal Pradesh',
-    ),
-    Product(
-      id: 'p3',
-      name: 'Red Apples',
-      description: 'Sweet and crunchy apples from local orchards.',
-      price: 120,
-      imageUrl:
-          'https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Fruits',
-      farmerId: 'f3',
-      farmerName: 'Orchard Hills',
-      weight: 1.0,
-      unit: 'kg',
-      isOrganic: true,
-      location: 'Srinagar, Kashmir',
-    ),
-    Product(
-      id: 'p4',
-      name: 'Fresh Milk',
-      description: 'Creamy, pasteurized milk from grass-fed cows.',
-      price: 58,
-      imageUrl:
-          'https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Dairy',
-      farmerId: 'f4',
-      farmerName: 'Meadow Dairy',
-      weight: 1.0,
-      unit: 'L',
-      isOrganic: false,
-      location: 'Anand, Gujarat',
-    ),
-    Product(
-      id: 'p5',
-      name: 'Free Range Eggs',
-      description: 'Eggs from free-range hens raised on natural feed.',
-      price: 100,
-      imageUrl:
-          'https://images.unsplash.com/photo-1598965675045-45c5e72c7d05?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Poultry',
-      farmerId: 'f5',
-      farmerName: 'Happy Hen Farm',
-      weight: 1.0,
-      unit: 'dozen',
-      isOrganic: true,
-      location: 'Namakkal, Tamil Nadu',
-    ),
-    Product(
-      id: 'p6',
-      name: 'Organic Spinach',
-      description: 'Fresh spinach leaves, locally grown without pesticides.',
-      price: 170,
-      imageUrl:
-          'https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'Vegetables',
-      farmerId: 'f1',
-      farmerName: 'Green Valley Farm',
-      weight: 1.0,
-      unit: 'kg',
-      isOrganic: true,
-      location: 'Pune, Maharashtra',
-    ),
-  ];
+  List<Product> _items = [];
 
   SortOption _currentSortOption = SortOption.nameAsc;
 
@@ -155,7 +64,6 @@ class ProductsProvider with ChangeNotifier {
                 : 1);
         break;
       case SortOption.newest:
-        // In a real app, you'd sort by date added, but we'll just use ID here
         sortedList.sort((a, b) => b.id.compareTo(a.id));
         break;
     }
@@ -175,113 +83,117 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      category: product.category,
-      farmerId: product.farmerId,
-      farmerName: product.farmerName,
-      weight: product.weight,
-      unit: product.unit,
-      isOrganic: product.isOrganic,
-      location: product.location,
-    );
-    _items.add(newProduct);
-    notifyListeners();
+  Future<void> fetchProducts() async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      final products = await _supabaseService.getProducts();
+      _items = products
+          .map((product) => Product(
+                id: product['id'].toString(),
+                name: product['product_name'] ?? '',
+                description: product['description'] ?? '',
+                price: (product['price'] as num).toDouble(),
+                imageUrl: product['image_url'] ?? '',
+                category: product['type'] ?? '',
+                farmerId: product['farmer_id']?.toString() ?? '',
+                farmerName: product['farm_name'] ?? '',
+                weight: (product['weight'] as num?)?.toDouble() ?? 1.0,
+                unit: product['unit'] ?? 'kg',
+                isOrganic: product['is_organic'] ?? false,
+                location: product['location'] ?? '',
+              ))
+          .toList();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (error) {
+      _error = error.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  // Fetch products from Supabase
-  Future<void> fetchProductsFromSupabase() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+  Future<void> addProduct(Product product) async {
     try {
-      final productsList = await _supabaseService.getProducts();
-      
-      _items = productsList.map((product) => Product.fromJson(product)).toList();
-      
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.addProduct({
+        'product_name': product.name,
+        'description': product.description,
+        'price': product.price,
+        'image_url': product.imageUrl,
+        'type': product.category,
+        'farm_name': product.farmerName,
+        'location': product.location,
+        'weight': product.weight,
+        'unit': product.unit,
+        'is_organic': product.isOrganic,
+      });
+
+      await fetchProducts(); // Refresh the products list
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
-      debugPrint('Error fetching products: $e');
       notifyListeners();
+      rethrow;
     }
   }
 
-  // Add product to Supabase
-  Future<void> addProductToSupabase(Product product) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+  Future<void> updateProduct(String id, Product updatedProduct) async {
     try {
-      // First add to Supabase
-      await _supabaseService.addProduct(product.toJson());
-      
-      // Then add to local list
-      addProduct(product);
-      
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      await _supabaseService.updateProduct(id, {
+        'product_name': updatedProduct.name,
+        'description': updatedProduct.description,
+        'price': updatedProduct.price,
+        'image_url': updatedProduct.imageUrl,
+        'type': updatedProduct.category,
+        'farm_name': updatedProduct.farmerName,
+        'location': updatedProduct.location,
+        'weight': updatedProduct.weight,
+        'unit': updatedProduct.unit,
+        'is_organic': updatedProduct.isOrganic,
+      });
+
+      await fetchProducts(); // Refresh the products list
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
-      debugPrint('Error adding product: $e');
       notifyListeners();
+      rethrow;
     }
   }
 
-  // Update product in Supabase
-  Future<void> updateProductInSupabase(String id, Product updatedProduct) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
+  Future<void> deleteProduct(String id) async {
     try {
-      await _supabaseService.updateProduct(id, updatedProduct.toJson());
-      
-      // Update local list
-      final productIndex = _items.indexWhere((product) => product.id == id);
-      if (productIndex >= 0) {
-        _items[productIndex] = updatedProduct;
-      }
-      
-      _isLoading = false;
+      _isLoading = true;
+      _error = null;
       notifyListeners();
-    } catch (e) {
-      _error = e.toString();
-      _isLoading = false;
-      debugPrint('Error updating product: $e');
-      notifyListeners();
-    }
-  }
 
-  // Delete product from Supabase
-  Future<void> deleteProductFromSupabase(String id) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
       await _supabaseService.deleteProduct(id);
-      
-      // Remove from local list
       _items.removeWhere((product) => product.id == id);
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
-      debugPrint('Error deleting product: $e');
       notifyListeners();
+      rethrow;
     }
   }
 }

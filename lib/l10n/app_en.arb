@@ -20,5 +20,19 @@
   "sanskrit": "Sanskrit",
   "konkani": "Konkani",
   "dogri": "Dogri",
-  "bhojpuri": "Bhojpuri"
+  "bhojpuri": "Bhojpuri",
+  "consumer": "Consumer",
+  "farmer": "Farmer",
+  "originalPrice": "Original Price",
+  "offeredPrice": "Offered Price",
+  "counterOffer": "Counter Offer",
+  "accept": "Accept",
+  "reject": "Reject",
+  "accepted": "Accepted",
+  "rejected": "Rejected",
+  "makeCounterOffer": "Make Counter Offer",
+  "enterCounterOfferPrice": "Enter Counter Offer Price",
+  "enterPrice": "Enter Price",
+  "cancel": "Cancel",
+  "submit": "Submit"
 } 
