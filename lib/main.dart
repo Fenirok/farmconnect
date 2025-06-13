@@ -20,6 +20,7 @@ import 'consumer/screens/chat_screen.dart';
 import 'consumer/screens/chat_detail_screen.dart';
 import 'consumer/screens/orders_screen.dart';
 import 'consumer/screens/wallet_screen.dart';
+import 'consumer/screens/negotiations_screen.dart';
 import 'widgets/main_layout.dart';
 import 'package:farmconnect/farmer/widgets/farmer_layout.dart';
 import 'screens/farmer_login_screen.dart';

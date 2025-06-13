@@ -16,36 +16,126 @@ class NegotiationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final negotiationsProvider =
         Provider.of<NegotiationsProvider>(context, listen: false);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              negotiation.productName,
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: negotiation.imageUrl.isNotEmpty
+                      ? Image.network(
+                          negotiation.imageUrl,
+                          fit: BoxFit.cover,
+                        )
+                      : const Icon(Icons.image, size: 40),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        negotiation.productName,
+                        style: theme.textTheme.titleMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        isFarmer
+                            ? 'Consumer: ${negotiation.consumerName}'
+                            : 'Farmer: ${negotiation.farmerName}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Original Price:',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                'Rs. ${negotiation.originalPrice.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  color: Colors.grey,
+                                  decorationThickness: 2,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                isFarmer ? 'Consumer Offer:' : 'Your Offer:',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                'Rs. ${negotiation.offeredPrice.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              isFarmer ? negotiation.consumerName : negotiation.farmerName,
-              style: Theme.of(context).textTheme.titleMedium,
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildStatusChip(negotiation.status),
+                Text(
+                  negotiation.status == 'pending'
+                      ? 'Response by: ${_formatDeadline(negotiation.responseDeadline)}'
+                      : negotiation.status == 'accepted'
+                          ? 'Final price: Rs. ${negotiation.finalPrice.toStringAsFixed(2)}'
+                          : 'Rejected on: ${_formatDate(negotiation.createdAt.add(const Duration(days: 1)))}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            _buildPriceRow(
-                context, l10n.originalPrice, negotiation.originalPrice),
-            _buildPriceRow(
-                context, l10n.offeredPrice, negotiation.offeredPrice),
-            if (negotiation.isCounterOffer)
-              _buildPriceRow(context, l10n.counterOffer,
-                  negotiation.counterOfferPrice ?? 0.0),
-            const SizedBox(height: 16),
-            if (negotiation.isPending && isFarmer)
+            if (negotiation.isPending && isFarmer) ...[
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -76,52 +166,81 @@ class NegotiationCard extends StatelessWidget {
                     child: const Text('Counter Offer'),
                   ),
                 ],
-              )
-            else if (!negotiation.isPending)
-              Center(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: negotiation.isAccepted
-                        ? Colors.green.shade100
-                        : Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: negotiation.isAccepted ? Colors.green : Colors.red,
-                    ),
-                  ),
-                  child: Text(
-                    negotiation.isAccepted ? l10n.accepted : l10n.rejected,
-                    style: TextStyle(
-                      color: negotiation.isAccepted
-                          ? Colors.green.shade700
-                          : Colors.red.shade700,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPriceRow(BuildContext context, String label, double price) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+  Widget _buildStatusChip(String status) {
+    Color chipColor;
+    IconData iconData;
+    String label;
+
+    switch (status) {
+      case 'pending':
+        chipColor = Colors.blue;
+        iconData = Icons.hourglass_empty;
+        label = 'Pending';
+        break;
+      case 'accepted':
+        chipColor = Colors.green.shade700;
+        iconData = Icons.check_circle;
+        label = 'Accepted';
+        break;
+      case 'rejected':
+        chipColor = Colors.red.shade700;
+        iconData = Icons.cancel;
+        label = 'Rejected';
+        break;
+      default:
+        chipColor = Colors.grey;
+        iconData = Icons.help;
+        label = 'Unknown';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: chipColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: chipColor),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label),
+          Icon(iconData, size: 16, color: chipColor),
+          const SizedBox(width: 4),
           Text(
-            '₹${price.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.titleMedium,
+            label,
+            style: TextStyle(
+              color: chipColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  String _formatDeadline(DateTime deadline) {
+    final now = DateTime.now();
+    final difference = deadline.difference(now);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''}';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''}';
+    } else {
+      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''}';
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   void _showCounterOfferDialog(BuildContext context) {

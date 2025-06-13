@@ -34,5 +34,32 @@
   "enterCounterOfferPrice": "Enter Counter Offer Price",
   "enterPrice": "Enter Price",
   "cancel": "Cancel",
-  "submit": "Submit"
+  "submit": "Submit",
+  "addToCart": "Add to Cart",
+  "priceNegotiation": "Price Negotiation",
+  "negotiate": "Negotiate",
+  "makeOffer": "Make an offer to the farmer. You can negotiate only once per product.",
+  "yourPrice": "Your Price (Rs.)",
+  "waitingTime": "Waiting time for response:",
+  "submitOffer": "Submit Offer",
+  "offerSubmitted": "Offer Submitted!",
+  "offerSubmittedMessage": "Your offer of Rs. {price} has been sent to {farmerName}. They will review your offer and respond soon.",
+  "negotiationInProgress": "Negotiation in progress",
+  "negotiationMessage": "The farmer will respond to your offer soon. You will be notified once a response is received.",
+  "description": "Description",
+  "sellerInformation": "Seller Information",
+  "localFarmer": "Local Farmer",
+  "contactSeller": "Contact Seller",
+  "reviews": "Reviews",
+  "viewAll": "View All",
+  "reviewsCount": "{rating} ({count} reviews)",
+  "error": "Error",
+  "errorSubmittingOffer": "Failed to submit offer: {error}",
+  "sendingOffer": "Sending your offer to the farmer...",
+  "priceValidation": {
+    "required": "Please enter a price",
+    "invalid": "Please enter a valid price",
+    "positive": "Price must be greater than 0",
+    "lowerThanOriginal": "Offer must be lower than the original price"
+  }
 } 

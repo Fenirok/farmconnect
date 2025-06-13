@@ -208,6 +208,19 @@ class AppLocalizations {
           'Farmer profile not found. Please register first.',
       'otpSentSuccess': 'OTP sent successfully',
       'register': 'Register',
+
+      // Product Overview Screen
+      'freshFromFarm': 'Fresh from Farm',
+      'supportLocalFarmers': 'Support Local Farmers',
+      'allProducts': 'All Products',
+      'vegetables': 'Vegetables',
+      'fruits': 'Fruits',
+      'crops': 'Crops',
+      'poultry': 'Poultry',
+      'sort': 'Sort',
+      'errorLoadingProducts': 'Error loading products',
+      'noProductsAvailable': 'No products available',
+      'checkBackLater': 'Check back later',
     },
     'hi': {
       'welcome': 'फार्मकनेक्ट में आपका स्वागत है',
@@ -372,6 +385,19 @@ class AppLocalizations {
           'किसान प्रोफ़ाइल नहीं मिली। कृपया पहले पंजीकरण करें।',
       'otpSentSuccess': 'ओटीपी सफलतापूर्वक भेजा गया',
       'register': 'पंजीकरण करें',
+
+      // Product Overview Screen
+      'freshFromFarm': 'ताजा से फार्म',
+      'supportLocalFarmers': 'स्थानीय किसानों का समर्थन',
+      'allProducts': 'सभी उत्पाद',
+      'vegetables': 'सब्जियां',
+      'fruits': 'फल',
+      'crops': 'फसल',
+      'poultry': 'मोटरी',
+      'sort': 'क्रमबद्ध करें',
+      'errorLoadingProducts': 'उत्पाद लोड करने में त्रुटि',
+      'noProductsAvailable': 'उत्पाद उपलब्ध नहीं',
+      'checkBackLater': 'बाद में फिर जाएं',
     },
     'bn': {
       'welcome': 'ফার্মকানেক্টে আপনাকে স্বাগতম',
@@ -500,8 +526,8 @@ class AppLocalizations {
       'sortBy': 'সাজানোর ধরন',
       'nameAZ': 'নাম (A-Z)',
       'nameZA': 'নাম (Z-A)',
-      'priceLowHigh': 'মূল্য (কম-বেশি)',
-      'priceHighLow': 'মূল্য (বেশি-কম)',
+      'priceLowHigh': 'মূল্য (কম-অধিক)',
+      'priceHighLow': 'মূল্য (অধিক-কম)',
       'newest': 'সবচেয়ে নতুন',
       'noProductsFound': 'কোন পণ্য পাওয়া যায়নি!',
       'retry': 'আবার চেষ্টা করুন',
@@ -536,6 +562,19 @@ class AppLocalizations {
           'কৃষক প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে প্রথমে নিবন্ধন করুন।',
       'otpSentSuccess': 'ওটিপি সফলভাবে পাঠানো হয়েছে',
       'register': 'নিবন্ধন করুন',
+
+      // Product Overview Screen
+      'freshFromFarm': 'ताजा से फार्म',
+      'supportLocalFarmers': 'स्थानीय किसानों का समर्थन',
+      'allProducts': 'सभी उत्पाद',
+      'vegetables': 'सब्जियां',
+      'fruits': 'फल',
+      'crops': 'फसल',
+      'poultry': 'मोटरी',
+      'sort': 'क्रमबद्ध करें',
+      'errorLoadingProducts': 'उत्पाद लोड करने में त्रुटि',
+      'noProductsAvailable': 'उत्पाद उपलब्ध नहीं',
+      'checkBackLater': 'बाद में फिर जाएं',
     },
   };
 
@@ -690,6 +729,19 @@ class AppLocalizations {
       _getLocalizedValue('farmerProfileNotFound');
   String get otpSentSuccess => _getLocalizedValue('otpSentSuccess');
   String get register => _getLocalizedValue('register');
+
+  // Product Overview Screen
+  String get freshFromFarm => _getLocalizedValue('freshFromFarm');
+  String get supportLocalFarmers => _getLocalizedValue('supportLocalFarmers');
+  String get allProducts => _getLocalizedValue('allProducts');
+  String get vegetables => _getLocalizedValue('vegetables');
+  String get fruits => _getLocalizedValue('fruits');
+  String get crops => _getLocalizedValue('crops');
+  String get poultry => _getLocalizedValue('poultry');
+  String get sort => _getLocalizedValue('sort');
+  String get errorLoadingProducts => _getLocalizedValue('errorLoadingProducts');
+  String get noProductsAvailable => _getLocalizedValue('noProductsAvailable');
+  String get checkBackLater => _getLocalizedValue('checkBackLater');
 }
 
 class _AppLocalizationsDelegate

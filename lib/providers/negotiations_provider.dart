@@ -224,4 +224,61 @@ class NegotiationsProvider with ChangeNotifier {
   int getPendingNegotiationsCount() {
     return getPendingNegotiations().length;
   }
+
+  // Fetch negotiations for a specific farmer
+  Future<List<Negotiation>> fetchFarmerNegotiations() async {
+    try {
+      final user = _supabaseService.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Get the farmer's name from the user metadata
+      final farmerName = user.userMetadata?['name'] as String? ?? '';
+      print('Fetching negotiations for farmer: $farmerName');
+
+      // First get all negotiations for this farmer
+      final negotiations = await _supabaseService.client
+          .from('negotiations')
+          .select()
+          .eq('farm_name', farmerName)
+          .eq('status', 'pending')
+          .order('created_at', ascending: false);
+
+      if (negotiations.isEmpty) {
+        return [];
+      }
+
+      // Then get all products
+      final products = await _supabaseService.client
+          .from('product')
+          .select('product_name, farm_name, image_url, price')
+          .filter('product_name', 'in',
+              negotiations.map((n) => n['product_name']).toList());
+
+      // Create a map for quick product lookup
+      final productMap = {
+        for (var product in products) product['product_name']: product
+      };
+
+      // Combine negotiations with product details
+      final negotiationsWithDetails = negotiations.map((negotiation) {
+        final product = productMap[negotiation['product_name']] ?? {};
+        return {
+          ...negotiation,
+          'image_url': product['image_url'] ?? '',
+          'farm_name': product['farm_name'] ?? negotiation['farm_name'],
+          'listed_price': product['price'] ?? negotiation['listed_price'],
+        };
+      }).toList();
+
+      print('Processed negotiations: ${negotiationsWithDetails.length}');
+      return negotiationsWithDetails
+          .map((data) => Negotiation.fromMap(data))
+          .toList();
+    } catch (e) {
+      print('Error fetching farmer negotiations: $e');
+      rethrow;
+    }
+  }
 }

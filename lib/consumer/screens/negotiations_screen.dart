@@ -18,28 +18,32 @@ class NegotiationsScreen extends StatelessWidget {
     final rejectedNegotiations =
         negotiationsProvider.getNegotiationsByStatus('rejected');
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('My Negotiations'),
-          bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
-            tabs: [
-              Tab(text: 'Active (${activeNegotiations.length})'),
-              Tab(text: 'Accepted (${acceptedNegotiations.length})'),
-              Tab(text: 'Rejected (${rejectedNegotiations.length})'),
+    return WillPopScope(
+      onWillPop: () async => false, // Prevent back button
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false, // Remove back button
+            title: Text('My Negotiations'),
+            bottom: TabBar(
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              indicatorColor: Colors.white,
+              tabs: [
+                Tab(text: 'Active (${activeNegotiations.length})'),
+                Tab(text: 'Accepted (${acceptedNegotiations.length})'),
+                Tab(text: 'Rejected (${rejectedNegotiations.length})'),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              _buildNegotiationsList(activeNegotiations, 'pending', context),
+              _buildNegotiationsList(acceptedNegotiations, 'accepted', context),
+              _buildNegotiationsList(rejectedNegotiations, 'rejected', context),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _buildNegotiationsList(activeNegotiations, 'pending', context),
-            _buildNegotiationsList(acceptedNegotiations, 'accepted', context),
-            _buildNegotiationsList(rejectedNegotiations, 'rejected', context),
-          ],
         ),
       ),
     );

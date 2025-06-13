@@ -60,16 +60,16 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         final shouldLogout = await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: const Text('Logout'),
-                content: const Text('Do you want to logout?'),
+                title: Text(appLocalizations.logout),
+                content: Text(appLocalizations.logoutConfirmation),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(false),
-                    child: const Text('Cancel'),
+                    child: Text(appLocalizations.cancel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(true),
-                    child: const Text('Logout'),
+                    child: Text(appLocalizations.logout),
                   ),
                 ],
               ),
@@ -100,40 +100,40 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                       _selectedCategory = null;
                       break;
                     case FilterOptions.vegetables:
-                      _selectedCategory = 'Vegetables';
+                      _selectedCategory = appLocalizations.vegetables;
                       break;
                     case FilterOptions.fruits:
-                      _selectedCategory = 'Fruits';
+                      _selectedCategory = appLocalizations.fruits;
                       break;
                     case FilterOptions.crops:
-                      _selectedCategory = 'Crops';
+                      _selectedCategory = appLocalizations.crops;
                       break;
                     case FilterOptions.poultry:
-                      _selectedCategory = 'Poultry';
+                      _selectedCategory = appLocalizations.poultry;
                       break;
                   }
                 });
               },
               itemBuilder: (_) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: FilterOptions.all,
-                  child: Text('All Products'),
+                  child: Text(appLocalizations.allProducts),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: FilterOptions.vegetables,
-                  child: Text('Vegetables'),
+                  child: Text(appLocalizations.vegetables),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: FilterOptions.fruits,
-                  child: Text('Fruits'),
+                  child: Text(appLocalizations.fruits),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: FilterOptions.crops,
-                  child: Text('Crops'),
+                  child: Text(appLocalizations.crops),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: FilterOptions.poultry,
-                  child: Text('Poultry'),
+                  child: Text(appLocalizations.poultry),
                 ),
               ],
             ),
@@ -199,7 +199,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Fresh from the Farm',
+                    appLocalizations.freshFromFarm,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.green.shade800,
@@ -207,7 +207,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Support local farmers and get fresh, high-quality produce delivered to your doorstep.',
+                    appLocalizations.supportLocalFarmers,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.green.shade700,
                         ),
@@ -223,46 +223,46 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 children: [
                   Text(
                     _selectedCategory == null
-                        ? 'All Products'
+                        ? appLocalizations.allProducts
                         : _selectedCategory!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   PopupMenuButton(
                     icon: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Text('Sort'),
-                        SizedBox(width: 4),
-                        Icon(Icons.sort),
+                      children: [
+                        Text(appLocalizations.sort),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.sort),
                       ],
                     ),
                     onSelected: (SortOption value) {
                       productsData.setSortOption(value);
                     },
                     itemBuilder: (ctx) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.nameAsc,
-                        child: Text('Name (A to Z)'),
+                        child: Text(appLocalizations.nameAZ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.nameDesc,
-                        child: Text('Name (Z to A)'),
+                        child: Text(appLocalizations.nameZA),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.priceAsc,
-                        child: Text('Price (Low to High)'),
+                        child: Text(appLocalizations.priceLowHigh),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.priceDesc,
-                        child: Text('Price (High to Low)'),
+                        child: Text(appLocalizations.priceHighLow),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.organic,
-                        child: Text('Organic First'),
+                        child: Text(appLocalizations.organic),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: SortOption.newest,
-                        child: Text('Newest First'),
+                        child: Text(appLocalizations.newest),
                       ),
                     ],
                   ),
@@ -286,7 +286,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Error loading products',
+                                appLocalizations.errorLoadingProducts,
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 8),
@@ -305,7 +305,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                                           listen: false)
                                       .fetchProducts();
                                 },
-                                child: const Text('Retry'),
+                                child: Text(appLocalizations.retry),
                               ),
                             ],
                           ),
@@ -322,13 +322,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'No products available',
+                                    appLocalizations.noProductsAvailable,
                                     style:
                                         Theme.of(context).textTheme.titleLarge,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Check back later for fresh products',
+                                    appLocalizations.checkBackLater,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium

@@ -43,6 +43,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   
+  
   # Supabase
   supabase_flutter: ^2.3.4
   supabase: ^2.0.8
@@ -54,7 +55,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_icon.png"
+  
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -78,8 +84,8 @@ flutter:
   generate: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+     - assets/app_icon.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
