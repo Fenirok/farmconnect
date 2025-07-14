@@ -29,18 +29,12 @@ import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart';
 import 'consumer/screens/consumer_login_screen.dart';
 import 'consumer/screens/consumer_signup_screen.dart';
-import 'services/supabase_service.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase for farmer OTP and data storage
-  try {
-    await SupabaseService().initialize();
-  } catch (e) {
-    debugPrint('Error initializing Supabase: $e');
-  }
+  // TODO: Initialize Spring Boot + PostgreSQL backend connection
 
   // Add error handling for Flutter framework errors
   FlutterError.onError = (FlutterErrorDetails details) {

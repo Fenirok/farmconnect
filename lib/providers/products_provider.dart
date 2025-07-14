@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
-import '../services/supabase_service.dart';
+// TODO: Replace with Spring Boot + PostgreSQL backend service
 
 enum SortOption {
   nameAsc,
@@ -12,7 +12,8 @@ enum SortOption {
 }
 
 class ProductsProvider with ChangeNotifier {
-  final _supabaseService = SupabaseService();
+  // TODO: Replace with Spring Boot + PostgreSQL backend service
+  // final _supabaseService = SupabaseService();
   bool _isLoading = false;
   String? _error;
 
@@ -89,7 +90,9 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final products = await _supabaseService.getProducts();
+      // TODO: Replace with Spring Boot + PostgreSQL backend products service
+      // final products = await _supabaseService.getProducts();
+      final products = <Map<String, dynamic>>[]; // Placeholder for now
       _items = products
           .map((product) => Product(
                 id: product['id'].toString(),
@@ -122,18 +125,19 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.addProduct({
-        'product_name': product.name,
-        'description': product.description,
-        'price': product.price,
-        'image_url': product.imageUrl,
-        'type': product.category,
-        'farm_name': product.farmerName,
-        'location': product.location,
-        'weight': product.weight,
-        'unit': product.unit,
-        'is_organic': product.isOrganic,
-      });
+      // TODO: Replace with Spring Boot + PostgreSQL backend product creation
+      // await _supabaseService.addProduct({
+      //   'product_name': product.name,
+      //   'description': product.description,
+      //   'price': product.price,
+      //   'image_url': product.imageUrl,
+      //   'type': product.category,
+      //   'farm_name': product.farmerName,
+      //   'location': product.location,
+      //   'weight': product.weight,
+      //   'unit': product.unit,
+      //   'is_organic': product.isOrganic,
+      // });
 
       await fetchProducts(); // Refresh the products list
 
@@ -153,18 +157,19 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.updateProduct(id, {
-        'product_name': updatedProduct.name,
-        'description': updatedProduct.description,
-        'price': updatedProduct.price,
-        'image_url': updatedProduct.imageUrl,
-        'type': updatedProduct.category,
-        'farm_name': updatedProduct.farmerName,
-        'location': updatedProduct.location,
-        'weight': updatedProduct.weight,
-        'unit': updatedProduct.unit,
-        'is_organic': updatedProduct.isOrganic,
-      });
+      // TODO: Replace with Spring Boot + PostgreSQL backend product update
+      // await _supabaseService.updateProduct(id, {
+      //   'product_name': updatedProduct.name,
+      //   'description': updatedProduct.description,
+      //   'price': updatedProduct.price,
+      //   'image_url': updatedProduct.imageUrl,
+      //   'type': updatedProduct.category,
+      //   'farm_name': updatedProduct.farmerName,
+      //   'location': updatedProduct.location,
+      //   'weight': updatedProduct.weight,
+      //   'unit': updatedProduct.unit,
+      //   'is_organic': updatedProduct.isOrganic,
+      // });
 
       await fetchProducts(); // Refresh the products list
 
@@ -184,7 +189,8 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.deleteProduct(id);
+      // TODO: Replace with Spring Boot + PostgreSQL backend product deletion
+      // await _supabaseService.deleteProduct(id);
       _items.removeWhere((product) => product.id == id);
 
       _isLoading = false;

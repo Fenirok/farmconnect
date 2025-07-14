@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:farmconnect/screens/welcome_screen.dart';
-import 'package:farmconnect/services/supabase_service.dart';
 import 'package:farmconnect/utils/theme.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,28 +22,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadFarmerData() async {
     try {
-      final user = SupabaseService().currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
-      }
+      // Simulate loading delay
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      final phone = user.phone;
-      if (phone == null) {
-        throw Exception('Phone number not found');
-      }
-
-      String formattedPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-      if (formattedPhone.startsWith('91') && formattedPhone.length > 10) {
-        formattedPhone = formattedPhone.substring(2);
-      }
-
-      final farmer = await SupabaseService().getFarmerByPhone(formattedPhone);
-      if (farmer == null) {
-        throw Exception('Farmer profile not found');
-      }
+      // Dummy farmer data
+      final dummyFarmerData = {
+        'name': 'Rajesh Kumar',
+        'phone': '+91 9876543210',
+        'address':
+            'Village: Sukhdevpur, Block: Bikramganj, District: Rohtas, Bihar',
+        'state': 'Bihar',
+        'kisan_id': 'KISAN123456789',
+        'aadhaar_id': '1234-5678-9012',
+      };
 
       setState(() {
-        _farmerData = farmer;
+        _farmerData = dummyFarmerData;
         _isLoading = false;
       });
     } catch (e) {
@@ -55,23 +48,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _handleLogout() async {
-    try {
-      await SupabaseService().signOut();
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error logging out: ${e.toString()}')),
-        );
-      }
-    }
+  void _handleLogout() {
+    // Navigate to welcome screen and clear all previous routes
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -183,6 +166,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'State',
                                 _farmerData!['state'] ?? 'Not Set',
                                 Icons.map,
+                              ),
+                              const Divider(),
+                              _buildInfoRow(
+                                'Aadhaar Number',
+                                _farmerData!['aadhaar_id'] ?? 'Not Set',
+                                Icons.credit_card,
                               ),
                             ],
                           ),

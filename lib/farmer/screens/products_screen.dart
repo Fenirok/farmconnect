@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import '../../l10n/app_localizations.dart';
-import '../../services/supabase_service.dart';
+// TODO: Replace with Spring Boot + PostgreSQL backend service
 
 class Product {
   final int id;
@@ -98,7 +96,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Future<void> _loadProducts() async {
     try {
       setState(() => _isLoading = true);
-      final products = await SupabaseService().getProducts();
+      // TODO: Replace with Spring Boot + PostgreSQL backend products service
+      // final products = await SupabaseService().getProducts();
+      final products = <Map<String, dynamic>>[]; // Placeholder for now
       setState(() {
         _products = products
             .map((data) => Product(
@@ -139,7 +139,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
         productData['image_url'] = product.imageUrl;
       }
 
-      await SupabaseService().addProduct(productData);
+      // TODO: Replace with Spring Boot + PostgreSQL backend product creation
+      // await SupabaseService().addProduct(productData);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Product saved successfully')),
@@ -163,10 +164,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
         const SnackBar(content: Text('Uploading image...')),
       );
 
-      final String imageUrl = await SupabaseService().uploadProductImage(
-        File(image.path),
-        '${DateTime.now().millisecondsSinceEpoch}_${path.basename(image.path)}',
-      );
+      // TODO: Replace with Spring Boot + PostgreSQL backend image upload
+      // final String imageUrl = await SupabaseService().uploadProductImage(
+      //   File(image.path),
+      //   '${DateTime.now().millisecondsSinceEpoch}_${path.basename(image.path)}',
+      // );
+      final String imageUrl = ''; // Placeholder for now
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -533,13 +536,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
           TextButton(
             onPressed: () async {
               try {
-                // Delete the image from storage if it exists
-                if (product.imageUrl != null && product.imageUrl!.isNotEmpty) {
-                  await SupabaseService().deleteProductImage(product.imageUrl!);
-                }
+                // TODO: Replace with Spring Boot + PostgreSQL backend product deletion
+                // // Delete the image from storage if it exists
+                // if (product.imageUrl != null && product.imageUrl!.isNotEmpty) {
+                //   await SupabaseService().deleteProductImage(product.imageUrl!);
+                // }
 
-                // Delete the product from database
-                await SupabaseService().deleteProduct(product.id.toString());
+                // // Delete the product from database
+                // await SupabaseService().deleteProduct(product.id.toString());
 
                 setState(() {
                   _products.removeAt(index);

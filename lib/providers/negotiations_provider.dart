@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../services/supabase_service.dart';
+// TODO: Replace with Spring Boot + PostgreSQL backend service
 import '../models/negotiation.dart';
 
 class NegotiationsProvider with ChangeNotifier {
-  final _supabaseService = SupabaseService();
+  // TODO: Replace with Spring Boot + PostgreSQL backend service
+  // final _supabaseService = SupabaseService();
   bool _isLoading = false;
   String? _error;
   List<Negotiation> _negotiations = [];
@@ -20,8 +21,10 @@ class NegotiationsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final negotiationsData =
-          await _supabaseService.getNegotiationsWithDetails();
+      // TODO: Replace with Spring Boot + PostgreSQL backend negotiations service
+      // final negotiationsData =
+      //     await _supabaseService.getNegotiationsWithDetails();
+      final negotiationsData = <Map<String, dynamic>>[]; // Placeholder for now
       _negotiations =
           negotiationsData.map((data) => Negotiation.fromMap(data)).toList();
 
@@ -45,12 +48,13 @@ class NegotiationsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.submitNegotiation(
-        productName: productName,
-        farmName: farmName,
-        listedPrice: listedPrice,
-        offerByConsumer: offerByConsumer,
-      );
+      // TODO: Replace with Spring Boot + PostgreSQL backend negotiation submission
+      // await _supabaseService.submitNegotiation(
+      //   productName: productName,
+      //   farmName: farmName,
+      //   listedPrice: listedPrice,
+      //   offerByConsumer: offerByConsumer,
+      // );
 
       await fetchNegotiations(); // Refresh the negotiations list
 
@@ -162,7 +166,8 @@ class NegotiationsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.updateNegotiationStatus(negotiationId, 'accepted');
+      // TODO: Replace with Spring Boot + PostgreSQL backend negotiation status update
+      // await _supabaseService.updateNegotiationStatus(negotiationId, 'accepted');
       await fetchNegotiations();
 
       _isLoading = false;
@@ -181,7 +186,8 @@ class NegotiationsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.updateNegotiationStatus(negotiationId, 'rejected');
+      // TODO: Replace with Spring Boot + PostgreSQL backend negotiation status update
+      // await _supabaseService.updateNegotiationStatus(negotiationId, 'rejected');
       await fetchNegotiations();
 
       _isLoading = false;
@@ -201,8 +207,9 @@ class NegotiationsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _supabaseService.submitCounterOffer(
-          negotiationId, counterOfferPrice);
+      // TODO: Replace with Spring Boot + PostgreSQL backend counter offer submission
+      // await _supabaseService.submitCounterOffer(
+      //     negotiationId, counterOfferPrice);
       await fetchNegotiations();
 
       _isLoading = false;
@@ -228,7 +235,9 @@ class NegotiationsProvider with ChangeNotifier {
   // Fetch negotiations for a specific farmer
   Future<List<Negotiation>> fetchFarmerNegotiations() async {
     try {
-      final user = _supabaseService.currentUser;
+      // TODO: Replace with Spring Boot + PostgreSQL backend user service
+      // final user = _supabaseService.currentUser;
+      final user = null; // Placeholder for now
       if (user == null) {
         throw Exception('User not authenticated');
       }
@@ -237,24 +246,27 @@ class NegotiationsProvider with ChangeNotifier {
       final farmerName = user.userMetadata?['name'] as String? ?? '';
       print('Fetching negotiations for farmer: $farmerName');
 
-      // First get all negotiations for this farmer
-      final negotiations = await _supabaseService.client
-          .from('negotiations')
-          .select()
-          .eq('farm_name', farmerName)
-          .eq('status', 'pending')
-          .order('created_at', ascending: false);
+      // TODO: Replace with Spring Boot + PostgreSQL backend negotiations and products service
+      // // First get all negotiations for this farmer
+      // final negotiations = await _supabaseService.client
+      //     .from('negotiations')
+      //     .select()
+      //     .eq('farm_name', farmerName)
+      //     .eq('status', 'pending')
+      //     .order('created_at', ascending: false);
 
-      if (negotiations.isEmpty) {
-        return [];
-      }
+      // if (negotiations.isEmpty) {
+      //   return [];
+      // }
 
-      // Then get all products
-      final products = await _supabaseService.client
-          .from('product')
-          .select('product_name, farm_name, image_url, price')
-          .filter('product_name', 'in',
-              negotiations.map((n) => n['product_name']).toList());
+      // // Then get all products
+      // final products = await _supabaseService.client
+      //     .from('product')
+      //     .select('product_name, farm_name, image_url, price')
+      //     .filter('product_name', 'in',
+      //         negotiations.map((n) => n['product_name']).toList());
+      final negotiations = <Map<String, dynamic>>[]; // Placeholder for now
+      final products = <Map<String, dynamic>>[]; // Placeholder for now
 
       // Create a map for quick product lookup
       final productMap = {

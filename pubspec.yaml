@@ -44,9 +44,7 @@ dependencies:
     sdk: flutter
   
   
-  # Supabase
-  supabase_flutter: ^2.3.4
-  supabase: ^2.0.8
+  # TODO: Replace with Spring Boot + PostgreSQL backend
   connectivity_plus: ^5.0.2
   image_picker: ^1.0.7
 
