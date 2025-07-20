@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/main_layout.dart';
 import '../../l10n/app_localizations.dart';
-import '../../services/supabase_service.dart';
 
 class ConsumerSignupScreen extends StatefulWidget {
   static const String routeName = '/consumer-signup';
@@ -17,17 +16,8 @@ class ConsumerSignupScreen extends StatefulWidget {
 class _ConsumerSignupScreenState extends State<ConsumerSignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _aadhaarController = TextEditingController();
   final _addressController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
   String? _selectedState;
-  bool _isOtpSent = false;
-  bool _isOtpVerified = false;
-  bool _isLoading = false;
-  String? _errorMessage;
-  String? _phone;
-
   final List<String> _states = [
     'Andhra Pradesh',
     'Arunachal Pradesh',
@@ -56,160 +46,30 @@ class _ConsumerSignupScreenState extends State<ConsumerSignupScreen> {
     'Tripura',
     'Uttar Pradesh',
     'Uttarakhand',
-    'West Bengal'
+    'West Bengal',
   ];
+  final _aadhaarController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _aadhaarController.dispose();
     _addressController.dispose();
+    _aadhaarController.dispose();
     _phoneController.dispose();
-    _otpController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleOtpVerification() async {
-    if (!_isOtpSent) {
-      // First time - send OTP
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        final phone = _phoneController.text;
-        if (phone.length != 10) {
-          throw Exception('Please enter a valid 10-digit phone number');
-        }
-        _phone = phone;
-        await SupabaseService().sendOtp(phone: phone);
-        setState(() {
-          _isOtpSent = true;
-          _otpController.clear();
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('OTP sent successfully')),
-          );
-        }
-      } catch (e) {
-        setState(() {
-          _errorMessage = e.toString();
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    } else {
-      // Verify OTP
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        final otp = _otpController.text;
-        if (otp.length != 6) {
-          throw Exception('Please enter a valid 6-digit OTP');
-        }
-
-        await SupabaseService().verifyOtp(
-          phone: _phone!,
-          token: otp,
-        );
-
-        setState(() {
-          _isOtpVerified = true;
-        });
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('OTP verified successfully')),
-          );
-        }
-      } catch (e) {
-        setState(() {
-          _errorMessage = e.toString();
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    }
-  }
-
-  Future<void> _handleSignup() async {
+  void _handleSignup() {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
-    if (!_isOtpVerified) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please verify your OTP first')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // Format phone number to match database format
-      String formattedPhone = _phone!;
-      if (formattedPhone.startsWith('91') && formattedPhone.length > 10) {
-        formattedPhone = formattedPhone.substring(2);
-      }
-
-      // Update user metadata with phone number
-      await SupabaseService().updateUserMetadata({
-        'phone': formattedPhone,
-      });
-
-      final consumerData = {
-        'name': _nameController.text,
-        'address': _addressController.text,
-        'state': _selectedState,
-        'aadhaar_id': _aadhaarController.text,
-        'phone': formattedPhone,
-      };
-
-      await SupabaseService().insertConsumer(consumerData);
-
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainLayout()),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
+    // Simple signup - just navigate to main layout
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MainLayout()),
+    );
   }
 
   @override
@@ -265,38 +125,30 @@ class _ConsumerSignupScreenState extends State<ConsumerSignupScreen> {
                 TextFormField(
                   controller: _addressController,
                   decoration: InputDecoration(
-                    labelText: appLocalizations.deliveryAddress,
+                    labelText: 'Delivery Address',
                     border: const OutlineInputBorder(),
                   ),
+                  maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return appLocalizations.enterValidAddress;
+                      return 'Please enter your delivery address';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _selectedState,
                   decoration: InputDecoration(
                     labelText: appLocalizations.selectState,
                     border: const OutlineInputBorder(),
                   ),
+                  value: _selectedState,
                   items: _states
-                      .map((state) => DropdownMenuItem(
-                            value: state,
-                            child: Text(state),
-                          ))
+                      .map((st) => DropdownMenuItem(value: st, child: Text(st)))
                       .toList(),
-                  onChanged: (value) => setState(() {
-                    _selectedState = value;
-                  }),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return appLocalizations.selectState;
-                    }
-                    return null;
-                  },
+                  onChanged: (val) => setState(() => _selectedState = val),
+                  validator: (val) =>
+                      val == null ? appLocalizations.selectState : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -321,60 +173,28 @@ class _ConsumerSignupScreenState extends State<ConsumerSignupScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _handleSignup,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    appLocalizations.signup,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
                 const SizedBox(height: 16),
-                if (!_isOtpSent)
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleOtpVerification,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : Text(appLocalizations.generateOTP),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Already have an account? Login',
                   ),
-                if (_isOtpSent) ...[
-                  TextFormField(
-                    controller: _otpController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    decoration: InputDecoration(
-                      labelText: appLocalizations.verifyOTP,
-                      border: const OutlineInputBorder(),
-                      errorText: _errorMessage,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleOtpVerification,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Verify OTP'),
-                  ),
-                  if (_isOtpVerified) ...[
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSignup,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(appLocalizations.signup),
-                    ),
-                  ],
-                ],
+                ),
               ],
             ),
           ),

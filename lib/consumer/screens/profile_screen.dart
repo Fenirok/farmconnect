@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../screens/welcome_screen.dart';
 import 'orders_screen.dart';
 import '../../l10n/app_localizations.dart';
-import '../../services/supabase_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// TODO: Replace with Spring Boot + PostgreSQL backend service
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
@@ -15,65 +14,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Map<String, dynamic>? _consumerData;
-  bool _isLoading = true;
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchConsumerData();
-  }
-
-  Future<void> _fetchConsumerData() async {
-    try {
-      debugPrint('Starting to fetch consumer data...');
-
-      // Get the current user
-      final user = SupabaseService().currentUser;
-      debugPrint('Current user: ${user?.id}');
-
-      if (user == null) {
-        throw Exception('User not authenticated. Please login again.');
-      }
-
-      // Get the phone number from the user's metadata
-      final phone = user.userMetadata?['phone'] as String?;
-      debugPrint('Phone from metadata: $phone');
-
-      if (phone == null) {
-        throw Exception('Phone number not found in user metadata');
-      }
-
-      // Format phone number to match database format
-      String formattedPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-      if (formattedPhone.startsWith('91') && formattedPhone.length > 10) {
-        formattedPhone = formattedPhone.substring(2);
-      }
-      debugPrint('Formatted phone for query: $formattedPhone');
-
-      // Fetch consumer data using the phone number
-      final consumerData =
-          await SupabaseService().getConsumerByPhone(formattedPhone);
-      debugPrint('Fetched consumer data: $consumerData');
-
-      if (consumerData == null) {
-        throw Exception(
-            'Consumer profile not found. Please complete your profile setup.');
-      }
-
-      setState(() {
-        _consumerData = consumerData;
-        _isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching consumer data: $e');
-      setState(() {
-        _errorMessage = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
+  // Dummy consumer data - TODO: Replace with Spring Boot + PostgreSQL backend
+  final Map<String, dynamic> _consumerData = {
+    'name': 'Priya Sharma',
+    'address': '123 Green Valley, Bangalore, Karnataka 560001',
+    'phone': '9876543210',
+    'email': 'priya.sharma@email.com',
+    'aadhaar': '1234-5678-9012',
+    'orders_count': 15,
+    'negotiations_count': 8,
+    'favorites_count': 12,
+  };
 
   String _getInitials(String name) {
     if (name.isEmpty) return '';
@@ -92,38 +43,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(appLocalizations.myProfile),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchConsumerData,
-          ),
-        ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_errorMessage!),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _fetchConsumerData,
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildProfileHeader(context),
-                      const Divider(),
-                      _buildMenuSection(context),
-                    ],
-                  ),
-                ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildProfileHeader(context),
+            const Divider(),
+            _buildMenuSection(context),
+          ],
+        ),
+      ),
     );
   }
 
@@ -138,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             radius: 50,
             backgroundColor: Colors.green,
             child: Text(
-              _getInitials(_consumerData?['name'] ?? ''),
+              _getInitials(_consumerData['name']),
               style: const TextStyle(
                 fontSize: 32,
                 color: Colors.white,
@@ -148,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            _consumerData?['name'] ?? '',
+            _consumerData['name'],
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -156,7 +85,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            _consumerData?['address'] ?? '',
+            _consumerData['address'],
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '+91 ${_consumerData['phone']}',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -164,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '+91 ${_consumerData?['phone'] ?? ''}',
+            'Aadhaar: ${_consumerData['aadhaar']}',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -176,9 +114,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Column(
                 children: [
-                  const Text(
-                    '0', // TODO: Fetch actual order count
-                    style: TextStyle(
+                  Text(
+                    '${_consumerData['orders_count']}',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -201,9 +139,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Column(
                 children: [
-                  const Text(
-                    '0', // TODO: Fetch actual negotiations count
-                    style: TextStyle(
+                  Text(
+                    '${_consumerData['negotiations_count']}',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -226,9 +164,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Column(
                 children: [
-                  const Text(
-                    '0', // TODO: Fetch actual favorites count
-                    style: TextStyle(
+                  Text(
+                    '${_consumerData['favorites_count']}',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -343,28 +281,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Text(appLocalizations.cancel),
                     ),
                     TextButton(
-                      onPressed: () async {
+                      onPressed: () {
                         Navigator.of(ctx).pop();
-                        try {
-                          await SupabaseService().signOut();
-                          if (mounted) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => const WelcomeScreen(),
-                              ),
-                              (route) => false,
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Error signing out: ${e.toString()}'),
-                              ),
-                            );
-                          }
-                        }
+                        // Navigate to welcome screen and clear navigation stack
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const WelcomeScreen(),
+                          ),
+                          (route) => false,
+                        );
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.red,

@@ -18,7 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: CustomAppBar(
         title: appLocalizations.welcome,

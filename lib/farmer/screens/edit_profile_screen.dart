@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:farmconnect/services/supabase_service.dart';
+// TODO: Replace with Spring Boot + PostgreSQL backend service
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? farmerData;
@@ -51,7 +51,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      final user = SupabaseService().currentUser;
+      // TODO: Replace with Spring Boot + PostgreSQL backend user service
+      // final user = SupabaseService().currentUser;
+      final user = null; // Placeholder for now
       if (user == null) {
         throw Exception('User not authenticated');
       }
@@ -61,13 +63,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         throw Exception('Phone number not found');
       }
 
-      await SupabaseService().insertFarmer({
-        'name': _nameController.text,
-        'phone': phone,
-        'address': _addressController.text,
-        'state': _stateController.text,
-        'kisan_id': _kisanIdController.text,
-      });
+      // TODO: Replace with Spring Boot + PostgreSQL backend farmer update
+      // await SupabaseService().insertFarmer({
+      //   'name': _nameController.text,
+      //   'phone': phone,
+      //   'address': _addressController.text,
+      //   'state': _stateController.text,
+      //   'kisan_id': _kisanIdController.text,
+      // });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
