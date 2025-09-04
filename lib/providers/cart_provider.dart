@@ -41,7 +41,7 @@ class CartProvider with ChangeNotifier {
           price: negotiatedPrice ?? product.price,
           imageUrl: product.imageUrl,
           quantity: quantity,
-          farmerName: product.farmerName,
+          farmerName: product.farmName,
           weight: product.weight,
           unit: product.unit,
           isNegotiated: negotiatedPrice != null,

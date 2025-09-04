@@ -80,7 +80,7 @@ class ProductItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      product.farmerName,
+                      product.farmName,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],

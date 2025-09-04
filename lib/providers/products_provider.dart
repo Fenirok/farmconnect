@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../models/product.dart';
-// TODO: Replace with Spring Boot + PostgreSQL backend service
+import '../services/product_service.dart';
 
 enum SortOption {
   nameAsc,
@@ -12,8 +14,6 @@ enum SortOption {
 }
 
 class ProductsProvider with ChangeNotifier {
-  // TODO: Replace with Spring Boot + PostgreSQL backend service
-  // final _supabaseService = SupabaseService();
   bool _isLoading = false;
   String? _error;
 
@@ -76,7 +76,7 @@ class ProductsProvider with ChangeNotifier {
     return _items.where((product) => product.category == category).toList();
   }
 
-  List<Product> getProductsByFarmer(String farmerId) {
+  List<Product> getProductsByFarmer(int farmerId) {
     return _items.where((product) => product.farmerId == farmerId).toList();
   }
 
@@ -90,63 +90,60 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      // TODO: Replace with Spring Boot + PostgreSQL backend products service
-      // final products = await _supabaseService.getProducts();
-      final products = <Map<String, dynamic>>[]; // Placeholder for now
-      _items = products
-          .map((product) => Product(
-                id: product['id'].toString(),
-                name: product['product_name'] ?? '',
-                description: product['description'] ?? '',
-                price: (product['price'] as num).toDouble(),
-                imageUrl: product['image_url'] ?? '',
-                category: product['type'] ?? '',
-                farmerId: product['farmer_id']?.toString() ?? '',
-                farmerName: product['farm_name'] ?? '',
-                weight: (product['weight'] as num?)?.toDouble() ?? 1.0,
-                unit: product['unit'] ?? 'kg',
-                isOrganic: product['is_organic'] ?? false,
-                location: product['location'] ?? '',
-              ))
-          .toList();
+      print('Fetching products from backend...');
+      // Fetch products from Spring Boot backend
+      _items = await ProductService.fetchProducts();
+      print('Fetched ${_items.length} products from backend');
 
       _isLoading = false;
       notifyListeners();
+      print('Fetch completed and listeners notified');
     } catch (error) {
       _error = error.toString();
       _isLoading = false;
       notifyListeners();
+      print('Error fetching products: $error');
     }
   }
 
-  Future<void> addProduct(Product product) async {
+  Future<Map<String, dynamic>> addProduct(
+      Product product, File imageFile) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
-      // TODO: Replace with Spring Boot + PostgreSQL backend product creation
-      // await _supabaseService.addProduct({
-      //   'product_name': product.name,
-      //   'description': product.description,
-      //   'price': product.price,
-      //   'image_url': product.imageUrl,
-      //   'type': product.category,
-      //   'farm_name': product.farmerName,
-      //   'location': product.location,
-      //   'weight': product.weight,
-      //   'unit': product.unit,
-      //   'is_organic': product.isOrganic,
-      // });
+      print('Starting to add product: ${product.name}');
 
-      await fetchProducts(); // Refresh the products list
+      String imageUrl = await ProductService.uploadImage(imageFile);
+      print('Image uploaded successfully: $imageUrl');
 
-      _isLoading = false;
-      notifyListeners();
+      final result = await ProductService.addProduct(product, imageUrl);
+      print('Product service response: $result');
+
+      if (result['success']) {
+        // Product added successfully
+        await fetchProducts(); // Refresh the products list
+        print('Products refreshed. Total products: ${_items.length}');
+
+        _isLoading = false;
+        notifyListeners();
+        print('Provider notified listeners');
+
+        return result;
+      } else {
+        // AI validation failed
+        _isLoading = false;
+        notifyListeners();
+        print('AI validation failed: ${result['message']}');
+
+        return result;
+      }
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
       notifyListeners();
+      print('Error in addProduct: $e');
       rethrow;
     }
   }
@@ -157,19 +154,7 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      // TODO: Replace with Spring Boot + PostgreSQL backend product update
-      // await _supabaseService.updateProduct(id, {
-      //   'product_name': updatedProduct.name,
-      //   'description': updatedProduct.description,
-      //   'price': updatedProduct.price,
-      //   'image_url': updatedProduct.imageUrl,
-      //   'type': updatedProduct.category,
-      //   'farm_name': updatedProduct.farmerName,
-      //   'location': updatedProduct.location,
-      //   'weight': updatedProduct.weight,
-      //   'unit': updatedProduct.unit,
-      //   'is_organic': updatedProduct.isOrganic,
-      // });
+      await ProductService.updateProduct(id, updatedProduct);
 
       await fetchProducts(); // Refresh the products list
 
@@ -189,8 +174,7 @@ class ProductsProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      // TODO: Replace with Spring Boot + PostgreSQL backend product deletion
-      // await _supabaseService.deleteProduct(id);
+      await ProductService.deleteProduct(id);
       _items.removeWhere((product) => product.id == id);
 
       _isLoading = false;

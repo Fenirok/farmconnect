@@ -54,7 +54,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         builder: (ctx) => AlertDialog(
           title: const Text('Offer Submitted!'),
           content: Text(
-            'Your offer of Rs. ${_priceController.text} has been sent to ${product.farmerName}. They will review your offer and respond soon.',
+            'Your offer of Rs. ${_priceController.text} has been sent to ${product.farmName}. They will review your offer and respond soon.',
           ),
           actions: [
             TextButton(
@@ -71,7 +71,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       negotiationsProvider
           .submitNegotiation(
         productName: product.name,
-        farmName: product.farmerName,
+        farmName: product.farmName,
         listedPrice: product.price,
         offerByConsumer: offeredPrice,
       )
@@ -441,7 +441,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               backgroundColor: Colors.green.shade100,
                               radius: 30,
                               child: Text(
-                                product.farmerName.substring(0, 1),
+                                product.farmName.substring(0, 1),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -455,7 +455,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    product.farmerName,
+                                    product.farmName,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -494,7 +494,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (ctx) => ChatDetailScreen(
-                                      farmerName: product.farmerName,
+                                      farmerName: product.farmName,
                                       productName: product.name,
                                     ),
                                   ),
